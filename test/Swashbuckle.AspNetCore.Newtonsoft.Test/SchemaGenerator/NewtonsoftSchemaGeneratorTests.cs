@@ -389,7 +389,8 @@ public class NewtonsoftSchemaGeneratorTests
         Assert.False(schema.Properties["StringWithRequired"].Nullable);
         Assert.False(schema.Properties["StringWithRequiredAllowEmptyTrue"].Nullable);
         Assert.Null(schema.Properties["StringWithRequiredAllowEmptyTrue"].MinLength);
-        Assert.Equal(["NullableIntEnumWithRequired", "StringWithRequired", "StringWithRequiredAllowEmptyTrue"], schema.Required);
+        Assert.False(schema.Properties["NullableIntWithRequired"].Nullable);
+        Assert.Equal(["NullableIntEnumWithRequired", "NullableIntWithRequired", "StringWithRequired", "StringWithRequiredAllowEmptyTrue"], schema.Required);
         Assert.Equal("Description", schema.Properties[nameof(TypeWithValidationAttributes.StringWithDescription)].Description);
         Assert.True(schema.Properties[nameof(TypeWithValidationAttributes.StringWithReadOnly)].ReadOnly);
         Assert.False(schema.Properties[nameof(TypeWithValidationAttributes.NullableIntEnumWithRequired)].Nullable);
@@ -824,7 +825,11 @@ public class NewtonsoftSchemaGeneratorTests
                 "IntEnumWithRequiredDefault",
                 "IntEnumWithRequiredDisallowNull",
                 "IntEnumWithRequiredAlways",
-                "IntEnumWithRequiredAllowNull"
+                "IntEnumWithRequiredAllowNull",
+                "NullableIntWithRequiredDefault",
+                "NullableIntWithRequiredDisallowNull",
+                "NullableIntWithRequiredAlways",
+                "NullableIntWithRequiredAllowNull"
             ],
             schema.Properties.Keys
         );
@@ -832,6 +837,8 @@ public class NewtonsoftSchemaGeneratorTests
             [
                 "IntEnumWithRequiredAllowNull",
                 "IntEnumWithRequiredAlways",
+                "NullableIntWithRequiredAllowNull",
+                "NullableIntWithRequiredAlways",
                 "StringWithRequiredAllowNull",
                 "StringWithRequiredAlways",
                 "StringWithRequiredAlwaysButConflictingDataMember"
@@ -850,6 +857,10 @@ public class NewtonsoftSchemaGeneratorTests
         Assert.False(schema.Properties["IntEnumWithRequiredAllowNull"].Nullable);
         Assert.False(schema.Properties["IntEnumWithRequiredAlways"].Nullable);
         Assert.False(schema.Properties["IntEnumWithRequiredDisallowNull"].Nullable);
+        Assert.True(schema.Properties["NullableIntWithRequiredDefault"].Nullable);
+        Assert.True(schema.Properties["NullableIntWithRequiredAllowNull"].Nullable);
+        Assert.False(schema.Properties["NullableIntWithRequiredAlways"].Nullable);
+        Assert.False(schema.Properties["NullableIntWithRequiredDisallowNull"].Nullable);
         Assert.Equal("IntEnumNullable", schema.Properties["IntEnumWithRequiredDefault"].Reference.Id);
         Assert.Equal("IntEnumNullable", schema.Properties["IntEnumWithRequiredAllowNull"].Reference.Id);
         Assert.Equal(nameof(IntEnum), schema.Properties["IntEnumWithRequiredAlways"].Reference.Id);
@@ -864,8 +875,10 @@ public class NewtonsoftSchemaGeneratorTests
         var referenceSchema = Subject().GenerateSchema(typeof(JsonRequiredAnnotatedType), schemaRepository);
 
         var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-        Assert.Equal(["IntEnumWithRequired", "NullableIntEnumWithRequired", "StringWithConflictingRequired", "StringWithJsonRequired"], schema.Required);
+        Assert.Equal(["IntEnumWithRequired", "IntWithRequired", "NullableIntEnumWithRequired", "NullableIntWithRequired", "StringWithConflictingRequired", "StringWithJsonRequired"], schema.Required);
         Assert.False(schema.Properties["StringWithJsonRequired"].Nullable);
+        Assert.False(schema.Properties["IntWithRequired"].Nullable);
+        Assert.False(schema.Properties["NullableIntWithRequired"].Nullable);
         Assert.False(schema.Properties["IntEnumWithRequired"].Nullable);
         Assert.Equal(nameof(IntEnum), schema.Properties["IntEnumWithRequired"].Reference.Id);
         Assert.True(schemaRepository.TryLookupByType(typeof(IntEnum), out _));

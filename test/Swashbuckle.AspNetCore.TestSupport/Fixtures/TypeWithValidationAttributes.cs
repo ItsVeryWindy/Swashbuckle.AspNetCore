@@ -53,4 +53,7 @@ public class TypeWithValidationAttributes
 
     [Required]
     public IntEnum? NullableIntEnumWithRequired { get; set; }
+
+    [Required]
+    public int? NullableIntWithRequired { get; set; }
 }

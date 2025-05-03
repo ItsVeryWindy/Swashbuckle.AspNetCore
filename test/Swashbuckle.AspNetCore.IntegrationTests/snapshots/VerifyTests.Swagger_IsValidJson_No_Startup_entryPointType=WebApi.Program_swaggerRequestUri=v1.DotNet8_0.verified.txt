@@ -312,7 +312,8 @@
             "description": "Description",
             "schema": {
               "type": "string",
-              "format": "uuid"
+              "format": "uuid",
+              "nullable": true
             }
           },
           {
@@ -329,7 +330,8 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "format": "date-time"
+              "format": "date-time",
+              "nullable": true
             }
           },
           {
@@ -346,7 +348,8 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "format": "date"
+              "format": "date",
+              "nullable": true
             }
           },
           {
@@ -363,7 +366,8 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "format": "time"
+              "format": "time",
+              "nullable": true
             }
           },
           {
@@ -395,7 +399,8 @@
             "in": "query",
             "schema": {
               "type": "number",
-              "format": "double"
+              "format": "double",
+              "nullable": true
             }
           },
           {

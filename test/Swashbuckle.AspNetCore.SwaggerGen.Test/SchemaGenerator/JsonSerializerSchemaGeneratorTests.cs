@@ -36,42 +36,55 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Equal("binary", schema.Format);
     }
 
-    public static TheoryData<Type, JsonSchemaType, string> PrimitiveTypeData => new()
+    public static TheoryData<Type, JsonSchemaType, string, bool> PrimitiveTypeData => new()
     {
-        { typeof(bool), JsonSchemaTypes.Boolean, null },
-        { typeof(byte), JsonSchemaTypes.Integer, "int32" },
-        { typeof(sbyte), JsonSchemaTypes.Integer, "int32" },
-        { typeof(short), JsonSchemaTypes.Integer, "int32" },
-        { typeof(ushort), JsonSchemaTypes.Integer, "int32" },
-        { typeof(int), JsonSchemaTypes.Integer, "int32" },
-        { typeof(uint), JsonSchemaTypes.Integer, "int32" },
-        { typeof(long), JsonSchemaTypes.Integer, "int64" },
-        { typeof(ulong), JsonSchemaTypes.Integer, "int64" },
-        { typeof(float), JsonSchemaTypes.Number, "float" },
-        { typeof(double), JsonSchemaTypes.Number, "double" },
-        { typeof(decimal), JsonSchemaTypes.Number, "double" },
-        { typeof(string), JsonSchemaTypes.String, null },
-        { typeof(char), JsonSchemaTypes.String, null },
-        { typeof(byte[]), JsonSchemaTypes.String, "byte" },
-        { typeof(DateTime), JsonSchemaTypes.String, "date-time" },
-        { typeof(DateTimeOffset), JsonSchemaTypes.String, "date-time" },
-        { typeof(TimeSpan), JsonSchemaTypes.String, "date-span" },
-        { typeof(Guid), JsonSchemaTypes.String, "uuid" },
-        { typeof(Uri), JsonSchemaTypes.String, "uri" },
-        { typeof(Version), JsonSchemaTypes.String, null },
-        { typeof(DateOnly), JsonSchemaTypes.String, "date" },
-        { typeof(TimeOnly), JsonSchemaTypes.String, "time" },
-        { typeof(bool?), JsonSchemaTypes.Boolean, null },
-        { typeof(int?), JsonSchemaTypes.Integer, "int32" },
-        { typeof(DateTime?), JsonSchemaTypes.String, "date-time" },
-        { typeof(Guid?), JsonSchemaTypes.String, "uuid" },
-        { typeof(DateOnly?), JsonSchemaTypes.String, "date" },
-        { typeof(TimeOnly?), JsonSchemaTypes.String, "time" },
+        { typeof(bool), JsonSchemaTypes.Boolean, null, false },
+        { typeof(bool?), JsonSchemaTypes.Boolean, null, true },
+        { typeof(byte), JsonSchemaTypes.Integer, "int32", false },
+        { typeof(byte?), JsonSchemaTypes.Integer, "int32", true },
+        { typeof(sbyte), JsonSchemaTypes.Integer, "int32", false },
+        { typeof(sbyte?), JsonSchemaTypes.Integer, "int32", true },
+        { typeof(short), JsonSchemaTypes.Integer, "int32", false },
+        { typeof(short?), JsonSchemaTypes.Integer, "int32", true },
+        { typeof(ushort), JsonSchemaTypes.Integer, "int32", false },
+        { typeof(ushort?), JsonSchemaTypes.Integer, "int32", true },
+        { typeof(int), JsonSchemaTypes.Integer, "int32", false },
+        { typeof(int?), JsonSchemaTypes.Integer, "int32", true },
+        { typeof(uint), JsonSchemaTypes.Integer, "int32", false },
+        { typeof(uint?), JsonSchemaTypes.Integer, "int32", true },
+        { typeof(long), JsonSchemaTypes.Integer, "int64", false },
+        { typeof(long?), JsonSchemaTypes.Integer, "int64", true },
+        { typeof(ulong), JsonSchemaTypes.Integer, "int64", false },
+        { typeof(ulong?), JsonSchemaTypes.Integer, "int64", true },
+        { typeof(float), JsonSchemaTypes.Number, "float", false },
+        { typeof(float?), JsonSchemaTypes.Number, "float", true },
+        { typeof(double), JsonSchemaTypes.Number, "double", false },
+        { typeof(double?), JsonSchemaTypes.Number, "double", true },
+        { typeof(decimal), JsonSchemaTypes.Number, "double", false },
+        { typeof(decimal?), JsonSchemaTypes.Number, "double", true },
+        { typeof(string), JsonSchemaTypes.String, null, false },
+        { typeof(char), JsonSchemaTypes.String, null, false },
+        { typeof(char?), JsonSchemaTypes.String, null, true },
+        { typeof(byte[]), JsonSchemaTypes.String, "byte", false },
+        { typeof(DateTime), JsonSchemaTypes.String, "date-time", false },
+        { typeof(DateTime?), JsonSchemaTypes.String, "date-time", true },
+        { typeof(DateTimeOffset), JsonSchemaTypes.String, "date-time", false },
+        { typeof(DateTimeOffset?), JsonSchemaTypes.String, "date-time", true },
+        { typeof(TimeSpan), JsonSchemaTypes.String, "date-span", false },
+        { typeof(TimeSpan?), JsonSchemaTypes.String, "date-span", true },
+        { typeof(Guid), JsonSchemaTypes.String, "uuid", false },
+        { typeof(Guid?), JsonSchemaTypes.String, "uuid", true },
+        { typeof(Uri), JsonSchemaTypes.String, "uri", false },
+        { typeof(Version), JsonSchemaTypes.String, null, false },
+        { typeof(DateOnly), JsonSchemaTypes.String, "date", false },
+        { typeof(DateOnly?), JsonSchemaTypes.String, "date", true },
+        { typeof(TimeOnly), JsonSchemaTypes.String, "time", false },
+        { typeof(TimeOnly?), JsonSchemaTypes.String, "time", true },
 #if NET
-        { typeof(Int128), JsonSchemaTypes.Integer, "int128" },
-        { typeof(Int128?), JsonSchemaTypes.Integer, "int128" },
-        { typeof(UInt128), JsonSchemaTypes.Integer, "int128" },
-        { typeof(UInt128?), JsonSchemaTypes.Integer, "int128" },
+        { typeof(Int128), JsonSchemaTypes.Integer, "int128", false },
+        { typeof(Int128?), JsonSchemaTypes.Integer, "int128", true },
+        { typeof(UInt128), JsonSchemaTypes.Integer, "int128", false },
+        { typeof(UInt128?), JsonSchemaTypes.Integer, "int128", true },
 #endif
     };
 
@@ -80,12 +93,14 @@ public class JsonSerializerSchemaGeneratorTests
     public void GenerateSchema_GeneratesPrimitiveSchema_IfPrimitiveOrNullablePrimitiveType(
         Type type,
         JsonSchemaType expectedSchemaType,
-        string expectedFormat)
+        string expectedFormat,
+        bool expectedNullable)
     {
         var schema = Subject().GenerateSchema(type, new SchemaRepository());
 
         Assert.Equal(expectedSchemaType, schema.Type);
         Assert.Equal(expectedFormat, schema.Format);
+        Assert.Equal(expectedNullable, schema.Nullable);
     }
 
     [Theory]
@@ -388,8 +403,9 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Equal(1, schema.Properties["StringWithRequired"].MinLength);
         Assert.False(schema.Properties["StringWithRequired"].Nullable);
         Assert.False(schema.Properties["StringWithRequiredAllowEmptyTrue"].Nullable);
+        Assert.False(schema.Properties["NullableIntWithRequired"].Nullable);
         Assert.Null(schema.Properties["StringWithRequiredAllowEmptyTrue"].MinLength);
-        Assert.Equal(["NullableIntEnumWithRequired", "StringWithRequired", "StringWithRequiredAllowEmptyTrue"], schema.Required);
+        Assert.Equal(["NullableIntEnumWithRequired", "NullableIntWithRequired", "StringWithRequired", "StringWithRequiredAllowEmptyTrue"], schema.Required);
         Assert.Equal("Description", schema.Properties[nameof(TypeWithValidationAttributes.StringWithDescription)].Description);
         Assert.True(schema.Properties[nameof(TypeWithValidationAttributes.StringWithReadOnly)].ReadOnly);
     }
@@ -1246,7 +1262,11 @@ public class JsonSerializerSchemaGeneratorTests
         var referenceSchema = Subject().GenerateSchema(typeof(JsonRequiredAnnotatedType), schemaRepository);
 
         var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-        Assert.Equal(["StringWithJsonRequired"], schema.Required);
+        Assert.Equal(["IntEnumWithRequired", "IntWithRequired", "NullableIntEnumWithRequired", "NullableIntWithRequired", "StringWithJsonRequired"], schema.Required);
+        Assert.Equal("IntEnum", schema.Properties["IntEnumWithRequired"].Reference.Id);
+        Assert.False(schema.Properties["IntWithRequired"].Nullable);
+        Assert.True(schema.Properties["NullableIntWithRequired"].Nullable);
+        Assert.Equal("IntEnumNullable", schema.Properties["NullableIntEnumWithRequired"].Reference.Id);
         Assert.True(schema.Properties["StringWithJsonRequired"].Nullable);
     }
 #endif

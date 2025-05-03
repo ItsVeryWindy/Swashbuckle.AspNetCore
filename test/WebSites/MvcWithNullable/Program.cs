@@ -40,6 +40,22 @@ public class RequiredEnumController : ControllerBase
     public IActionResult Get([Required] LogLevel? logLevel = LogLevel.Error) => Ok(new { logLevel });
 }
 
+[ApiController]
+[Route("api/[controller]")]
+public class IntController : ControllerBase
+{
+    [HttpGet]
+    public IActionResult Get(int? number = 5) => Ok(new { number });
+}
+
+[ApiController]
+[Route("api/[controller]")]
+public class RequiredIntController : ControllerBase
+{
+    [HttpGet]
+    public IActionResult Get([Required] int? number = 5) => Ok(new { number });
+}
+
 namespace MvcWithNullable
 {
     /// <summary>
