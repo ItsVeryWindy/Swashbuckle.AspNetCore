@@ -44,4 +44,16 @@ public class JsonPropertyAnnotatedType
 
     [JsonProperty(Required = Required.AllowNull)]
     public IntEnum? IntEnumWithRequiredAllowNull { get; set; }
+
+    [JsonProperty(Required = Required.Default)]
+    public int? NullableIntWithRequiredDefault { get; set; }
+
+    [JsonProperty(Required = Required.DisallowNull)]
+    public int? NullableIntWithRequiredDisallowNull { get; set; }
+
+    [JsonProperty(Required = Required.Always)]
+    public int? NullableIntWithRequiredAlways { get; set; }
+
+    [JsonProperty(Required = Required.AllowNull)]
+    public int? NullableIntWithRequiredAllowNull { get; set; }
 }

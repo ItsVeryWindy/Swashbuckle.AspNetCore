@@ -40,6 +40,8 @@ public class TypeWithValidationAttributesViaMetadataType
     public string StringWithReadOnly { get; set; }
 
     public IntEnum? NullableIntEnumWithRequired { get; set; }
+
+    public int? NullableIntWithRequired { get; set; }
 }
 
 public class MetadataType
@@ -92,4 +94,7 @@ public class MetadataType
 
     [Required]
     public IntEnum? NullableIntEnumWithRequired { get; set; }
+
+    [Required]
+    public int? NullableIntWithRequired { get; set; }
 }

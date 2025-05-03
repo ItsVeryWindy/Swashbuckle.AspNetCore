@@ -19,4 +19,10 @@ public class JsonRequiredAnnotatedType
 
     [JsonRequired]
     public IntEnum? NullableIntEnumWithRequired { get; set; }
+
+    [JsonRequired]
+    public int IntWithRequired { get; set; }
+
+    [JsonRequired]
+    public int? NullableIntWithRequired { get; set; }
 }

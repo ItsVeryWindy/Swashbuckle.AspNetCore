@@ -368,6 +368,11 @@ public class SchemaGenerator(
                 .Select(JsonModelFactory.CreateFromJson)];
         }
 
+        if (underlyingType != dataContract.UnderlyingType)
+        {
+            schema.Nullable = true;
+        }
+
         return schema;
     }
 
